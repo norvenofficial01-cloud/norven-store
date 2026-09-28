@@ -1,0 +1,1 @@
+NORVEN base store. index.html = storefront; admin.html = local product/order panel. This is a prototype: real secure admin login, server database, payment verification, notifications and production hosting are not connected.
