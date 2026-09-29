@@ -1,3 +1,576 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NORVEN Admin</title><style>body{font-family:Arial;background:#f5f5f5;padding:15px}.box{background:white;padding:15px;border-radius:12px;margin-bottom:15px}input,select,button{width:100%;padding:10px;margin:5px 0;box-sizing:border-box}button{background:#111;color:white;border:0;border-radius:8px}.order{border-top:1px solid #ddd;padding:12px 0}</style></head><body><h1>NORVEN Admin</h1>
-<div class="box"><h2>Add Product</h2><input id="n" placeholder="Product name"><input id="p" type="number" placeholder="Price"><select id="c"><option>Clothing</option><option>Shoes</option><option>Watches</option><option>Gifts</option><option>Home & Kitchen</option><option>Gadgets</option></select><input id="i" placeholder="Image URL or filename"><button onclick="add()">Add Product</button></div><div class="box"><h2>Products</h2><div id="pl"></div></div><div class="box"><h2>Orders</h2><div id="ol"></div></div>
-<script>let ps=JSON.parse(localStorage.getItem('norven_products')||'[]');function save(){localStorage.setItem('norven_products',JSON.stringify(ps));render()}function add(){if(!n.value.trim())return alert('Name required');ps.push({name:n.value.trim(),price:+p.value||0,category:c.value,image:i.value.trim()});save();n.value=p.value=i.value=''}function del(x){ps.splice(x,1);save()}function render(){pl.innerHTML=ps.map((x,i)=>x.name+' — ₹'+x.price+' <button onclick="del('+i+')">Delete</button>').join('<br>')||'No products';let os=JSON.parse(localStorage.getItem('norven_orders')||'[]');ol.innerHTML=os.map(o=>'<div class="order"><b>Order #'+o.id+'</b><br>'+o.name+' | '+o.mobile+'<br>'+o.address+', '+o.pin+'<br>'+o.items.map(x=>x.name+' × '+x.qty).join(', ')+'<br>Total ₹'+o.total+' | '+o.payment+'<br>'+o.time+'</div>').join('')||'No orders'}render()</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NORVEN Admin</title>
+<style>
+:root{
+ --bg:#080808;
+ --panel:#111;
+ --panel2:#171717;
+ --gold:#d6b15a;
+ --text:#f7f3e8;
+ --muted:#999;
+ --line:#292929;
+ --danger:#d9534f;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+ font-family:Arial,sans-serif;
+}
+header{
+ position:sticky;
+ top:0;
+ z-index:10;
+ background:#080808ee;
+ border-bottom:1px solid var(--line);
+ padding:14px;
+ display:flex;
+ align-items:center;
+ gap:12px;
+ backdrop-filter:blur(10px);
+}
+header h1{
+ margin:0;
+ font-size:21px;
+ letter-spacing:3px;
+ flex:1;
+}
+a,button{
+ cursor:pointer;
+}
+.back{
+ color:var(--gold);
+ text-decoration:none;
+ border:1px solid var(--line);
+ padding:8px 12px;
+ border-radius:9px;
+}
+.wrap{
+ max-width:1100px;
+ margin:auto;
+ padding:15px;
+}
+.stats{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:10px;
+ margin-bottom:18px;
+}
+.stat{
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:15px;
+}
+.stat b{
+ display:block;
+ font-size:24px;
+ color:var(--gold);
+ margin-top:5px;
+}
+.tabs{
+ display:flex;
+ gap:8px;
+ overflow:auto;
+ margin-bottom:15px;
+}
+.tabs button{
+ white-space:nowrap;
+ background:var(--panel);
+ color:#ddd;
+ border:1px solid var(--line);
+ padding:10px 14px;
+ border-radius:999px;
+}
+.tabs button.active{
+ color:var(--gold);
+ border-color:var(--gold);
+}
+.panel{
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:15px;
+ padding:15px;
+ margin-bottom:15px;
+}
+h2{
+ margin-top:0;
+}
+input,select,textarea{
+ width:100%;
+ background:#0d0d0d;
+ color:var(--text);
+ border:1px solid var(--line);
+ padding:11px;
+ border-radius:9px;
+ margin:5px 0;
+ outline:none;
+}
+textarea{
+ min-height:80px;
+ resize:vertical;
+}
+.primary{
+ width:100%;
+ background:var(--gold);
+ color:#090909;
+ border:0;
+ padding:12px;
+ border-radius:9px;
+ font-weight:800;
+ margin-top:8px;
+}
+.danger{
+ background:#251010;
+ color:#ff8b86;
+ border:1px solid #512020;
+ padding:8px 10px;
+ border-radius:8px;
+}
+.product,.order{
+ border:1px solid var(--line);
+ border-radius:12px;
+ padding:12px;
+ margin:10px 0;
+ background:var(--panel2);
+}
+.product{
+ display:flex;
+ gap:12px;
+ align-items:center;
+}
+.product img{
+ width:70px;
+ height:70px;
+ object-fit:cover;
+ border-radius:9px;
+ background:#222;
+}
+.productInfo{
+ flex:1;
+ min-width:0;
+}
+.small{
+ color:var(--muted);
+ font-size:12px;
+ line-height:1.5;
+}
+.price{
+ color:var(--gold);
+ font-weight:800;
+ margin-top:4px;
+}
+.orderTop{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ align-items:center;
+}
+.status{
+ color:var(--gold);
+ font-weight:700;
+}
+.orderItems{
+ margin:10px 0;
+ padding:10px;
+ background:#0b0b0b;
+ border-radius:8px;
+}
+.notice{
+ color:#bbb;
+ font-size:13px;
+ line-height:1.6;
+ border-left:3px solid var(--gold);
+ padding-left:10px;
+}
+label{
+ display:block;
+ font-size:13px;
+ color:#ccc;
+ margin-top:7px;
+}
+@media(min-width:700px){
+ .stats{
+  grid-template-columns:repeat(4,1fr);
+ }
+ .formgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a class="back" href="index.html">← Store</a>
+<h1>NORVEN ADMIN</h1>
+</header>
+
+<main class="wrap">
+
+<div class="stats">
+<div class="stat">
+Products
+<b id="productCount">0</b>
+</div>
+<div class="stat">
+Orders
+<b id="orderCount">0</b>
+</div>
+<div class="stat">
+Sales
+<b id="salesTotal">₹0</b>
+</div>
+<div class="stat">
+Payment Gateway
+<b style="font-size:15px">KYC LATER</b>
+</div>
+</div>
+
+<div class="tabs">
+<button id="tabProducts" class="active" onclick="showTab('products')">Products</button>
+<button id="tabOrders" onclick="showTab('orders')">Orders</button>
+<button id="tabSettings" onclick="showTab('settings')">Settings</button>
+</div>
+
+<section id="productsTab">
+
+<div class="panel">
+<h2>Add Product</h2>
+
+<div class="formgrid">
+
+<div>
+<label>Product name</label>
+<input id="pName" placeholder="Example: Men's Shirt">
+</div>
+
+<div>
+<label>Sale price</label>
+<input id="pPrice" type="number" placeholder="499">
+</div>
+
+<div>
+<label>MRP</label>
+<input id="pMrp" type="number" placeholder="699">
+</div>
+
+<div>
+<label>Category</label>
+<input id="pCategory" placeholder="Clothing">
+</div>
+
+<div>
+<label>Image URL / filename</label>
+<input id="pImage" placeholder="product.jpg">
+</div>
+
+<div>
+<label>Stock</label>
+<input id="pStock" type="number" placeholder="10">
+</div>
+
+</div>
+
+<button class="primary" onclick="addProduct()">ADD PRODUCT</button>
+</div>
+
+<div class="panel">
+<h2>Products</h2>
+<div id="productList"></div>
+</div>
+
+</section>
+
+<section id="ordersTab" style="display:none">
+
+<div class="panel">
+<h2>Orders</h2>
+<div id="orderList"></div>
+</div>
+
+</section>
+
+<section id="settingsTab" style="display:none">
+
+<div class="panel">
+<h2>Store Settings</h2>
+
+<p class="notice">
+COD: ENABLED<br>
+UPI: INSTRUCTION / MANUAL MODE<br>
+ONLINE PAYMENT GATEWAY: KYC LATER
+</p>
+
+<h3>Current Contact</h3>
+
+<label>WhatsApp</label>
+<input value="7903489053" readonly>
+
+<label>Email</label>
+<input value="norvenofficial01@gmail.com" readonly>
+
+<p class="small">
+Real secure admin login, server database, verified online payments,
+customer notifications and production security require a backend setup.
+</p>
+
+</div>
+
+</section>
+
+</main>
+
+<script>
+
+const PRODUCT_KEY='norven_products';
+const ORDER_KEY='norven_orders';
+
+let products=JSON.parse(localStorage.getItem(PRODUCT_KEY)||'[]');
+let orders=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');
+
+function money(n){
+ return new Intl.NumberFormat('en-IN').format(Number(n)||0);
+}
+
+function esc(s){
+ return String(s||'').replace(/[&<>"']/g,m=>({
+ '&':'&amp;',
+ '<':'&lt;',
+ '>':'&gt;',
+ '"':'&quot;',
+ "'":'&#039;'
+ }[m]));
+}
+
+function saveProducts(){
+ localStorage.setItem(PRODUCT_KEY,JSON.stringify(products));
+}
+
+function saveOrders(){
+ localStorage.setItem(ORDER_KEY,JSON.stringify(orders));
+}
+
+function addProduct(){
+
+ let name=document.getElementById('pName').value.trim();
+ let price=Number(document.getElementById('pPrice').value);
+ let mrp=Number(document.getElementById('pMrp').value)||0;
+ let category=document.getElementById('pCategory').value.trim()||'General';
+ let image=document.getElementById('pImage').value.trim();
+ let stock=Number(document.getElementById('pStock').value)||0;
+
+ if(!name || !price){
+  alert('Product name and sale price are required.');
+  return;
+ }
+
+ products.push({
+  id:'P'+Date.now(),
+  name,
+  price,
+  mrp,
+  category,
+  image,
+  stock,
+  createdAt:Date.now()
+ });
+
+ saveProducts();
+
+ document.getElementById('pName').value='';
+ document.getElementById('pPrice').value='';
+ document.getElementById('pMrp').value='';
+ document.getElementById('pCategory').value='';
+ document.getElementById('pImage').value='';
+ document.getElementById('pStock').value='';
+
+ render();
+ alert('Product added.');
+}
+
+function deleteProduct(i){
+
+ if(!confirm('Delete this product?')) return;
+
+ products.splice(i,1);
+ saveProducts();
+ render();
+}
+
+function renderProducts(){
+
+ products=JSON.parse(localStorage.getItem(PRODUCT_KEY)||'[]');
+
+ document.getElementById('productCount').textContent=products.length;
+
+ if(!products.length){
+  document.getElementById('productList').innerHTML=
+  '<p class="small">No products added yet.</p>';
+  return;
+ }
+
+ document.getElementById('productList').innerHTML=products.map((p,i)=>{
+
+  let off=p.mrp&&p.mrp>p.price
+   ?Math.round((1-p.price/p.mrp)*100)
+   :0;
+
+  return `
+  <div class="product">
+
+   <img src="${esc(p.image||'logo.png')}"
+   onerror="this.src='logo.png'">
+
+   <div class="productInfo">
+    <b>${esc(p.name)}</b>
+
+    <div class="small">
+    Category: ${esc(p.category)}<br>
+    Stock: ${p.stock}
+    </div>
+
+    <div class="price">
+    ₹${money(p.price)}
+    ${p.mrp?'<span style="color:#777;text-decoration:line-through;font-size:12px"> ₹'+money(p.mrp)+'</span>':''}
+    ${off?'<span style="font-size:12px"> '+off+'% OFF</span>':''}
+    </div>
+   </div>
+
+   <button class="danger"
+   onclick="deleteProduct(${i})">Delete</button>
+
+  </div>
+  `;
+
+ }).join('');
+}
+
+function renderOrders(){
+
+ orders=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]');
+
+ document.getElementById('orderCount').textContent=orders.length;
+
+ let sales=orders
+ .filter(o=>o.status!=='Cancelled')
+ .reduce((s,o)=>s+(Number(o.total)||0),0);
+
+ document.getElementById('salesTotal').textContent='₹'+money(sales);
+
+ if(!orders.length){
+  document.getElementById('orderList').innerHTML=
+  '<p class="small">No orders yet.</p>';
+  return;
+ }
+
+ document.getElementById('orderList').innerHTML=orders
+ .slice()
+ .reverse()
+ .map((o,index)=>{
+
+  let realIndex=orders.length-1-index;
+
+  return `
+  <div class="order">
+
+   <div class="orderTop">
+    <b>${esc(o.id)}</b>
+    <span class="status">${esc(o.status||'Pending')}</span>
+   </div>
+
+   <p class="small">
+   ${esc(o.customer?.name||'')} ·
+   ${esc(o.customer?.mobile||'')}
+   </p>
+
+   <p class="small">
+   ${esc(o.customer?.address||'')}<br>
+   ${esc(o.customer?.city||'')},
+   ${esc(o.customer?.state||'')} -
+   ${esc(o.customer?.pin||'')}
+   </p>
+
+   <div class="orderItems">
+
+   ${
+    (o.items||[]).map(x=>
+    esc(x.name)+' × '+x.qty+
+    ' — ₹'+money(x.price*x.qty)
+    ).join('<br>')
+   }
+
+   </div>
+
+   <b>Total: ₹${money(o.total)}</b>
+
+   <p class="small">
+   Payment: ${esc(o.payment||'COD')}
+   </p>
+
+   <label>Order status</label>
+
+   <select onchange="changeStatus(${realIndex},this.value)">
+
+   ${
+    ['Pending','Confirmed','Packed','Shipped','Delivered','Cancelled']
+    .map(s=>
+    '<option '+(o.status===s?'selected':'')+'>'+s+'</option>'
+    ).join('')
+   }
+
+   </select>
+
+  </div>
+  `;
+
+ }).join('');
+}
+
+function changeStatus(i,status){
+
+ orders[i].status=status;
+ saveOrders();
+ renderOrders();
+}
+
+function showTab(tab){
+
+ document.getElementById('productsTab').style.display=
+ tab==='products'?'block':'none';
+
+ document.getElementById('ordersTab').style.display=
+ tab==='orders'?'block':'none';
+
+ document.getElementById('settingsTab').style.display=
+ tab==='settings'?'block':'none';
+
+ document.getElementById('tabProducts').classList.toggle(
+ 'active',tab==='products');
+
+ document.getElementById('tabOrders').classList.toggle(
+ 'active',tab==='orders');
+
+ document.getElementById('tabSettings').classList.toggle(
+ 'active',tab==='settings');
+}
+
+function render(){
+ renderProducts();
+ renderOrders();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
