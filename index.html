@@ -1,15 +1,200 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NORVEN</title>
-<style>body{margin:0;font-family:Arial;background:#f5f6f8}.top{background:#111;color:white;padding:12px;display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;object-fit:contain;background:white;border-radius:8px}.brand{font-size:22px;font-weight:bold;flex:1}.wrap{max-width:1100px;margin:auto;padding:14px}.banner img{width:100%;max-height:300px;object-fit:cover;border-radius:14px}input,textarea,select,button{padding:11px;border:1px solid #ddd;border-radius:9px;box-sizing:border-box}input,textarea,select{width:100%;margin:6px 0}button{cursor:pointer}.cats{display:flex;gap:8px;overflow:auto;margin:12px 0}.cats button{white-space:nowrap;background:white}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{background:white;padding:10px;border-radius:12px}.card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px}.add{width:100%;background:#111;color:white}.price{font-weight:bold;margin:6px 0}.box{background:white;padding:16px;border-radius:12px;margin:20px 0}.qr{display:block;max-width:220px;margin:12px auto}@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}footer{background:#111;color:#fff;text-align:center;padding:25px}</style></head>
-<body><div class="top"><img class="logo" src="logo.png"><div class="brand">NORVEN</div><button onclick="cartView()">🛒 Cart (<span id="count">0</span>)</button></div>
-<div class="wrap"><div class="banner"><img src="banner.png"></div><input id="search" placeholder="Search products..." oninput="render()"><div class="cats"><button onclick="cat='All';render()">All</button><button onclick="cat='Clothing';render()">Clothing</button><button onclick="cat='Shoes';render()">Shoes</button><button onclick="cat='Watches';render()">Watches</button><button onclick="cat='Gifts';render()">Gifts</button><button onclick="cat='Home & Kitchen';render()">Home & Kitchen</button><button onclick="cat='Gadgets';render()">Gadgets</button></div>
-<div id="products" class="grid"></div>
-<div class="box"><h2>Checkout</h2><form onsubmit="order(event)"><input id="nm" placeholder="Name" required><input id="mb" placeholder="Mobile" required><textarea id="ad" placeholder="Full Address" required></textarea><input id="pin" placeholder="PIN Code" required><p>Payment</p><label><input type="radio" name="pay" value="UPI" checked> UPI</label><label><input type="radio" name="pay" value="QR"> QR</label><div id="paybox"></div><button style="width:100%;background:#111;color:#fff">Place Order</button></form></div>
-<div class="box"><b>WhatsApp:</b> 7903489053<br><b>Email:</b> norvenofficial01@gmail.com<br><b>UPI:</b> 7903489053@fam</div></div><footer>NORVEN © 2026</footer>
-<script>let products=JSON.parse(localStorage.getItem('norven_products')||'[]'),cart=JSON.parse(localStorage.getItem('norven_cart')||'[]'),cat='All';const el=id=>document.getElementById(id);
-function render(){let q=el('search').value.toLowerCase(),a=products.filter(p=>(cat==='All'||p.category===cat)&&p.name.toLowerCase().includes(q));el('products').innerHTML=a.length?a.map((p,i)=>'<div class="card"><img src="'+(p.image||'')+'"><b>'+p.name+'</b><div class="price">₹'+p.price+'</div><button class="add" onclick="add('+products.indexOf(p)+')">Add to cart</button></div>').join(''):'<div class="box" style="grid-column:1/-1;text-align:center">No products yet. Add them from admin.html</div>';el('count').textContent=cart.reduce((s,x)=>s+x.qty,0)}
-function add(i){let p=products[i],x=cart.find(x=>x.name===p.name);x?x.qty++:cart.push({name:p.name,price:+p.price,qty:1});localStorage.setItem('norven_cart',JSON.stringify(cart));render()}
-function cartView(){alert(cart.length?cart.map(x=>x.name+' × '+x.qty+' = ₹'+x.price*x.qty).join('\n'):'Cart empty')}
-function payment(){el('paybox').innerHTML=document.querySelector('input[name=pay]:checked').value==='QR'?'<img class="qr" src="payment-qr.png"><p style="text-align:center">Scan QR to pay.</p>':'<p>UPI ID: <b>7903489053@fam</b></p>'}
-document.querySelectorAll('input[name=pay]').forEach(x=>x.onchange=payment);
-function order(e){e.preventDefault();if(!cart.length)return alert('Add a product first');let o={id:Date.now(),name:nm.value,mobile:mb.value,address:ad.value,pin:pin.value,payment:document.querySelector('input[name=pay]:checked').value,items:cart,total:cart.reduce((s,x)=>s+x.price*x.qty,0),time:new Date().toLocaleString()};let os=JSON.parse(localStorage.getItem('norven_orders')||'[]');os.push(o);localStorage.setItem('norven_orders',JSON.stringify(os));cart=[];localStorage.setItem('norven_cart','[]');e.target.reset();payment();render();alert('Order saved. Real payment verification is not connected yet.')}
-payment();render();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NORVEN — Everyday, Elevated.</title>
+<style>
+:root{--bg:#080808;--panel:#111;--panel2:#171717;--gold:#d6b15a;--text:#f7f3e8;--muted:#999;--line:#292929}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+.top{position:sticky;top:0;z-index:10;background:#080808ee;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 14px;backdrop-filter:blur(10px)}
+.logo{width:42px;height:42px;object-fit:contain;border-radius:8px}.brand{font-size:22px;letter-spacing:3px;font-weight:800;flex:1}
+.icon,.close{background:#171717;color:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:9px}
+.wrap{max-width:1200px;margin:auto;padding:14px}
+.hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:18px;margin-bottom:15px;background:#111}
+.hero img{width:100%;height:280px;object-fit:cover;display:block;opacity:.75}
+.heroText{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:24px;background:linear-gradient(90deg,#000e,transparent)}
+.eyebrow{color:var(--gold);letter-spacing:3px;font-size:12px}.hero h1{font-size:clamp(34px,7vw,62px);margin:8px 0}.hero p{color:#ddd}
+.tools{display:grid;grid-template-columns:1fr auto;gap:8px;margin:14px 0}
+input,select,textarea{width:100%;background:#101010;color:var(--text);border:1px solid var(--line);padding:12px;border-radius:10px;outline:none}
+select{width:auto}.cats{display:flex;gap:8px;overflow:auto;padding-bottom:5px;margin-bottom:18px}
+.cats button{white-space:nowrap;background:#111;color:#ddd;border:1px solid var(--line);padding:9px 13px;border-radius:999px}
+.cats button.active{border-color:var(--gold);color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden}
+.pic{position:relative}.pic img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#1a1a1a}
+.wish{position:absolute;right:8px;top:8px;border:0;border-radius:50%;width:36px;height:36px;background:#000b;color:#fff}
+.info{padding:12px}.name{font-weight:700;min-height:38px}.price{margin-top:7px;font-size:18px;font-weight:800}
+.mrp{color:#777;text-decoration:line-through;font-size:12px;margin-left:5px}.discount{color:var(--gold);font-size:12px;margin-left:5px}
+.add,.primary{width:100%;margin-top:10px;background:var(--gold);color:#090909;border:0;padding:11px;border-radius:9px;font-weight:800}
+.empty{grid-column:1/-1;text-align:center;padding:35px;color:var(--muted);border:1px dashed var(--line);border-radius:15px}
+.modal{display:none;position:fixed;inset:0;background:#000c;z-index:20;align-items:flex-end}
+.sheet{width:100%;max-height:90vh;overflow:auto;background:#111;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:18px}
+.close{float:right}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.qty button{background:#222;color:#fff;border:1px solid var(--line);padding:6px 10px}.total{font-size:20px;font-weight:800;padding:15px 0}
+.note{font-size:12px;color:#999;line-height:1.5}.gold{color:var(--gold)}
+footer{margin-top:30px;padding:30px 14px;border-top:1px solid var(--line);color:#999;text-align:center}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}.hero img{height:380px}.modal{align-items:center}.sheet{max-width:620px;border-radius:20px}}
+</style>
+</head>
+<body>
+<header class="top">
+<img class="logo" src="logo.png" onerror="this.style.display='none'">
+<div class="brand">NORVEN</div>
+<button class="icon" onclick="openCart()">🛒 <span id="count">0</span></button>
+</header>
+
+<main class="wrap">
+<section class="hero">
+<img src="banner.png" onerror="this.style.display='none'">
+<div class="heroText">
+<span class="eyebrow">NORVEN STORE</span>
+<h1>Everyday, Elevated.</h1>
+<p>Fashion • Gifts • Home • Gadgets</p>
+</div>
+</section>
+
+<div class="tools">
+<input id="search" placeholder="Search products..." oninput="render()">
+<select id="sort" onchange="render()">
+<option value="new">Latest</option>
+<option value="low">Price: Low</option>
+<option value="high">Price: High</option>
+</select>
+</div>
+
+<div id="cats" class="cats"></div>
+<section id="products" class="grid"></section>
+</main>
+
+<footer>
+NORVEN © 2026 · <a href="admin.html" style="color:#d6b15a">Admin</a><br>
+<span class="note">Privacy · Terms · Returns · Shipping · Contact</span>
+</footer>
+
+<div id="modal" class="modal" onclick="if(event.target.id==='modal')closeModal()">
+<div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+const KEY='norven_products',CART='norven_cart',ORD='norven_orders',WISH='norven_wishlist';
+let products=JSON.parse(localStorage.getItem(KEY)||'[]');
+let cart=JSON.parse(localStorage.getItem(CART)||'[]');
+let wishlist=JSON.parse(localStorage.getItem(WISH)||'[]');
+let cat='All';
+
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('en-IN').format(n);
+
+function save(){
+ localStorage.setItem(CART,JSON.stringify(cart));
+ localStorage.setItem(WISH,JSON.stringify(wishlist));
+ $('count').textContent=cart.reduce((a,x)=>a+x.qty,0);
+}
+
+function esc(s){
+ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+function cats(){
+ let cs=['All',...new Set(products.map(p=>p.category).filter(Boolean))];
+ $('cats').innerHTML=cs.map(c=>
+ '<button class="'+(c===cat?'active':'')+'" onclick="cat='+JSON.stringify(c)+';render()">'+esc(c)+'</button>'
+ ).join('');
+}
+
+function render(){
+ products=JSON.parse(localStorage.getItem(KEY)||'[]');
+ cats();
+ let q=$('search').value.toLowerCase();
+ let a=products.filter(p=>(cat==='All'||p.category===cat)&&String(p.name).toLowerCase().includes(q));
+
+ a.sort((x,y)=>{
+   if($('sort').value==='low')return +x.price-+y.price;
+   if($('sort').value==='high')return +y.price-+x.price;
+   return (y.createdAt||0)-(x.createdAt||0);
+ });
+
+ $('products').innerHTML=a.length?a.map(p=>{
+   let i=products.indexOf(p);
+   let off=p.mrp&&p.mrp>p.price?Math.round((1-p.price/p.mrp)*100):0;
+   return '<article class="card"><div class="pic"><img src="'+esc(p.image||'')+'" onerror="this.src=\\'logo.png\\'"><button class="wish" onclick="toggleWish('+i+')">'+(wishlist.includes(i)?'♥':'♡')+'</button></div><div class="info"><div class="name">'+esc(p.name)+'</div><div class="price">₹'+money(p.price)+(p.mrp?'<span class="mrp">₹'+money(p.mrp)+'</span>':'')+(off?'<span class="discount">'+off+'% OFF</span>':'')+'</div><button class="add" onclick="add('+i+')">ADD TO CART</button></div></article>';
+ }).join(''):'<div class="empty">No products found.</div>';
+
+ save();
+}
+
+function add(i){
+ let p=products[i],x=cart.find(x=>x.id===p.id);
+ x?x.qty++:cart.push({id:p.id,name:p.name,price:+p.price,qty:1});
+ save();openCart();
+}
+
+function toggleWish(i){
+ wishlist.includes(i)?wishlist=wishlist.filter(x=>x!==i):wishlist.push(i);
+ save();render();
+}
+
+function closeModal(){$('modal').style.display='none'}
+function show(html){$('sheet').innerHTML=html;$('modal').style.display='flex'}
+
+function openCart(){
+ show('<button class="close" onclick="closeModal()">✕</button><h2>Your Cart</h2>'+
+ (cart.length?
+ cart.map((x,i)=>'<div class="row"><span>'+esc(x.name)+'<br><small>₹'+money(x.price)+'</small></span><span class="qty"><button onclick="changeQty('+i+',-1)">−</button> '+x.qty+' <button onclick="changeQty('+i+',1)">+</button></span></div>').join('')+
+ '<div class="total">Total: ₹'+money(cart.reduce((s,x)=>s+x.price*x.qty,0))+'</div><button class="primary" onclick="checkout()">Proceed to Checkout</button>'
+ :'<p class="note">Your cart is empty.</p>')
+ );
+}
+
+function changeQty(i,d){
+ cart[i].qty+=d;
+ if(cart[i].qty<=0)cart.splice(i,1);
+ save();openCart();
+}
+
+function checkout(){
+ if(!cart.length)return;
+ show('<button class="close" onclick="closeModal()">✕</button><h2>Checkout</h2>'+
+ '<input id="nm" placeholder="Full name">'+
+ '<input id="mb" placeholder="Mobile number">'+
+ '<textarea id="ad" placeholder="Full address"></textarea>'+
+ '<input id="city" placeholder="City">'+
+ '<input id="state" placeholder="State">'+
+ '<input id="pin" placeholder="PIN code">'+
+ '<div style="border:1px solid #292929;padding:12px;border-radius:12px;margin:10px 0">'+
+ '<b>Payment</b><br><label><input type="radio" name="pay" value="COD" checked> Cash on Delivery</label><br>'+
+ '<label><input type="radio" name="pay" value="UPI"> UPI</label>'+
+ '<p class="note">UPI is currently instruction/manual mode. Real payment verification will be connected after KYC.</p></div>'+
+ '<button class="primary" onclick="placeOrder()">Place Order</button>'+
+ '<p class="note">Payment gateway/KYC can be activated later.</p>');
+}
+
+function placeOrder(){
+ let fields=['nm','mb','ad','city','state','pin'];
+ if(fields.some(id=>!$(id).value.trim()))return alert('Please fill all details.');
+
+ let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+ let o={
+   id:'NV'+Date.now(),
+   customer:{
+     name:$('nm').value, mobile:$('mb').value,address:$('ad').value,
+     city:$('city').value,state:$('state').value,pin:$('pin').value
+   },
+   items:cart,total,
+   payment:document.querySelector('input[name="pay"]:checked').value,
+   status:'Pending',createdAt:Date.now()
+ };
+
+ let os=JSON.parse(localStorage.getItem(ORD)||'[]');
+ os.push(o);
+ localStorage.setItem(ORD,JSON.stringify(os));
+ cart=[];save();
+
+ show('<h2 class="gold">Order Placed</h2><p>Your order ID is <b>'+o.id+'</b>.</p><p class="note">Keep this ID for support.</p><button class="primary" onclick="closeModal()">Continue Shopping</button>');
+}
+
+render();
+</script>
+</body>
+</html>
