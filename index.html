@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NORVEN — Everyday, Elevated.</title><link rel="stylesheet" href="styles.css"></head>
-<body><header class="top"><a class="brand" href="index.html">NORVEN</a><nav><a href="#shop">Shop</a><a href="account.html">Account</a><a href="admin.html">Admin</a><button onclick="openCart()">Cart <b id="cartCount">0</b></button></nav></header>
-<section class="hero"><img src="banner.png" onerror="this.style.display='none'"><div><small>NEW VISION • EVERYDAY NEEDS</small><h1>Everyday,<br><i>Elevated.</i></h1><p>Fashion, lifestyle, gifts and useful everyday products — curated by NORVEN.</p><button class="gold" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">SHOP NOW</button></div></section>
+<body><header class="top"><a class="brand" href="index.html">NORVEN</a><nav><a href="#shop">Shop</a><a class="big-action" href="account.html">👤 Account</a><a class="big-action" href="admin.html">Admin</a><button class="big-action" onclick="openCart()">🛒 Cart <b id="cartCount">0</b></button></nav></header>
+<section class="hero"><a class="hero-link" href="#shop" aria-label="Shop NORVEN"><img src="banner.png" alt="NORVEN — More Than Just a Store"></a></section>
 <main><section class="section"><small>EXPLORE</small><h2>Shop by Category</h2><div id="cats" class="chips"></div></section>
 <section class="section" id="shop"><div class="toolbar"><input id="search" placeholder="Search products..." oninput="render()"><select id="sort" onchange="render()"><option value="new">Newest</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option></select></div><div id="products" class="grid"></div></section></main>
 <div id="modal" class="modal"><div id="modalBox" class="modalbox"></div></div><aside id="cart" class="drawer"><div class="row"><h2>Cart</h2><button onclick="closeCart()">✕</button></div><div id="cartItems"></div><div class="cartfoot"><b id="cartTotal">₹0</b><button class="gold" onclick="checkout()">CHECKOUT</button></div></aside>

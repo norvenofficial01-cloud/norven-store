@@ -1,0 +1,19 @@
+NORVEN FINAL FUTURE-READY FEATURE PLAN
+======================================
+Visual: supplied NORVEN reference style/layout, supplied logo and full banner.
+Header: large visible Account/person icon and Cart/cart icon with item count.
+Customer: homepage, unlimited catalog, categories/subcategories, search, filter, sort,
+product details, 4-6 images, video, description, specifications, price/MRP/discount,
+stock, size/color/SKU, related products, wishlist, cart, quantity, coupons, offers,
+shipping/free shipping, account, profile, multiple addresses, orders, tracking, invoice.
+Reviews: 1-5 stars, text, photos, videos, count/date, helpful, verified purchase, moderation.
+Checkout: name/mobile/address/city/state/PIN, COD, UPI, QR, UPI ID, payment confirmation,
+admin verification, future payment gateway.
+Order states: New, Confirmed, Packed, Shipped, Out for Delivery, Delivered, Cancelled, Returned, Refunded.
+Admin: private dashboard architecture, products, categories, subcategories, orders, customers,
+reviews, coupons, offers, homepage, banners, ads/promotions, featured products, logo/banner/text,
+QR/UPI, store/shipping settings, notifications, KYC & Payments, future gateway.
+Homepage control: no fixed product limit; admin chooses homepage products and order.
+Security: Supabase Auth/Database/Storage/RLS architecture; customer self-access; admin permissions.
+Delivery: third-party courier for all-India; no NORVEN delivery-boy app at launch; courier-side OTP expected.
+Return/Refund: admin/future-ready only; customer-facing controls OFF at launch.
