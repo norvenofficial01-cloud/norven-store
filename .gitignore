@@ -1,0 +1,4 @@
+.env
+*.secret
+service-role*.js
+node_modules/

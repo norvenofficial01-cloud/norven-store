@@ -1,19 +1,147 @@
-NORVEN FINAL FUTURE-READY FEATURE PLAN
-======================================
-Visual: supplied NORVEN reference style/layout, supplied logo and full banner.
-Header: large visible Account/person icon and Cart/cart icon with item count.
-Customer: homepage, unlimited catalog, categories/subcategories, search, filter, sort,
-product details, 4-6 images, video, description, specifications, price/MRP/discount,
-stock, size/color/SKU, related products, wishlist, cart, quantity, coupons, offers,
-shipping/free shipping, account, profile, multiple addresses, orders, tracking, invoice.
-Reviews: 1-5 stars, text, photos, videos, count/date, helpful, verified purchase, moderation.
-Checkout: name/mobile/address/city/state/PIN, COD, UPI, QR, UPI ID, payment confirmation,
-admin verification, future payment gateway.
-Order states: New, Confirmed, Packed, Shipped, Out for Delivery, Delivered, Cancelled, Returned, Refunded.
-Admin: private dashboard architecture, products, categories, subcategories, orders, customers,
-reviews, coupons, offers, homepage, banners, ads/promotions, featured products, logo/banner/text,
-QR/UPI, store/shipping settings, notifications, KYC & Payments, future gateway.
-Homepage control: no fixed product limit; admin chooses homepage products and order.
-Security: Supabase Auth/Database/Storage/RLS architecture; customer self-access; admin permissions.
-Delivery: third-party courier for all-India; no NORVEN delivery-boy app at launch; courier-side OTP expected.
-Return/Refund: admin/future-ready only; customer-facing controls OFF at launch.
+NORVEN — 129-FUNCTION MASTER CHECKLIST
+
+CUSTOMER WEBSITE
+1 Homepage
+2 Premium NORVEN design
+3 Reference-style visual layout
+4 Categories
+5 Sub-categories
+6 Search
+7 Filters
+8 Sorting
+9 Product detail page
+10 Multiple product photos (4–6 supported)
+11 Product video field
+12 Description
+13 Specifications
+14 Price
+15 MRP
+16 Discount percentage
+17 Stock availability
+18 Size variants
+19 Color variants
+20 SKU
+21 Related-products structure
+22 Wishlist
+23 Cart
+24 Quantity +/-
+25 Coupon structure
+26 Offers structure
+27 Shipping charges
+28 Free-shipping rules
+29 Customer account/login structure
+30 Customer profile
+31 Multiple addresses structure
+32 Order history
+33 Order tracking/status
+34 Order details
+35 Order cancellation structure
+36 Return request (customer UI OFF for now)
+37 Refund status (customer UI OFF for now)
+38 Invoice/order receipt structure
+
+RATINGS & REVIEWS
+39 1–5 star rating
+40 Written reviews
+41 Review photos
+42 Review videos
+43 Rating count
+44 Review date
+45 Helpful option structure
+46 Verified-purchase structure
+47 Admin review moderation
+
+CHECKOUT & PAYMENT
+48 Customer name
+49 Mobile number
+50 Address
+51 City
+52 State
+53 PIN code
+54 COD
+55 UPI
+56 UPI QR
+57 UPI ID
+58 Payment confirmation structure
+59 Admin payment verification
+60 Online payment gateway integration point
+61 Invoice/receipt
+
+ORDERS
+62 New
+63 Confirmed
+64 Packed
+65 Shipped
+66 Out for Delivery
+67 Delivered
+68 Cancelled
+69 Returned
+70 Refunded
+
+PRIVATE ADMIN
+71 Private admin login
+72 Authorized-admin restriction
+73 Dashboard
+74 Sales statistics
+75 Product management
+76 Add product
+77 Edit product
+78 Delete product
+79 Product photos/video fields
+80 Price/MRP/discount edit
+81 Stock management
+82 SKU/variants management
+83 Category management
+84 Sub-category management
+85 Order management
+86 Customer management
+87 Review management
+88 Coupon management
+89 Offers management
+90 Homepage management
+91 Banner management
+92 Ads/promotions
+93 Featured products
+94 Logo change
+95 Banner change
+96 Text/content edit structure
+97 Payment QR change
+98 UPI ID/settings
+99 Store settings
+100 Shipping settings
+101 Return/refund future activation
+102 KYC & Payments
+103 Payment gateway future integration
+104 Notifications/settings
+
+SECURITY/BACKEND
+105 Supabase database schema
+106 Real product data schema
+107 Real customer data schema
+108 Real order data schema
+109 Customer authentication schema
+110 Admin authentication schema
+111 Admin permissions
+112 Database security
+113 RLS policies
+114 Storage schema
+115 Backup/safety plan
+116 Secure customer/order data
+
+EXTRA
+117 Mobile responsive
+118 Fast-loading structure
+119 SEO basics
+120 About page
+121 Contact page
+122 Privacy Policy
+123 Terms & Conditions
+124 Shipping Policy
+125 Return/Refund Policy
+126 WhatsApp support
+127 Customer notifications structure
+128 Custom domain readiness
+129 Existing NORVEN site upgraded, not a new unrelated site
+
+IMPORTANT STATUS
+This package is the frontend/admin build and includes the Supabase schema/integration points. Real shared database/auth/storage/payment/courier/notification services require the corresponding external accounts and final backend connection. Until Supabase is connected, data is local-browser data.
